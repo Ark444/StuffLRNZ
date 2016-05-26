@@ -3,6 +3,8 @@
 
 import random
 import os
+import PIL
+from PIL import Image
 import argparse
 
 class Learner(object):
@@ -14,21 +16,43 @@ class Learner(object):
 
     def set_lang(self, lang):
         self.lang = {}
-        lang_file = os.path.join(self.lang_dir, lang + '.txt')
-        try:
-            if self.verbose == True:
-                print('Loading lang file...')
-            with open(lang_file) as f:
-                for l in f.readlines():
-                    try:
-                        (key, val) = l.strip().split(self.separator)
-                        self.lang[key] = val
-                    except ValueError:
-                        pass
+        if os.path.isdir(os.path.join(self.lang_dir, lang)):
+            langdir = os.path.join(self.lang_dir, lang)
+            for f in os.listdir(langdir):
+                if f.lower().endswith('.png'):
+                    img = Image.open(os.path.join(langdir, f))
+                    width, height = img.size
+                    img.resize((30, 30), PIL.Image.ANTIALIAS)
+
+                    img.convert("RGBA")
+                    pixdata = img.load()
+                    
+                    symbol = ""
+                    # skiping one pixel line every time to preserve size
+                    for j in range(0, height, 2):
+                        for i in range(0, width):
+                            if pixdata[i, j][3] == 255:
+                                symbol += "#"
+                            else:
+                                symbol += " "
+                        symbol += "\n"
+                    self.lang[symbol] = f.lower().split('.')[0]
+        else:
+            lang_file = os.path.join(self.lang_dir, lang + '.txt')
+            try:
                 if self.verbose == True:
-                    print('Loaded lang file ["{}"]'.format(lang_file))
-        except FileNotFoundError:
-            raise
+                    print('Loading lang file...')
+                with open(lang_file) as f:
+                    for l in f.readlines():
+                        try:
+                            (key, val) = l.strip().split(self.separator)
+                            self.lang[key] = val
+                        except ValueError:
+                            pass
+                    if self.verbose == True:
+                        print('Loaded lang file ["{}"]'.format(lang_file))
+            except FileNotFoundError:
+                raise
 
     def learn(self):
         good_replies = 0
@@ -57,5 +81,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     learner = Learner(verbose = True)
-    learner.set_lang('katakana')
+    learner.set_lang('kana')
+    #learner.set_lang('katakana')
     learner.learn()
