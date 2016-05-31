@@ -67,10 +67,10 @@ class Learner(object):
                     int((good_replies / nb_replies) * 100)
                 ))
                 break
-            if guess == self.lang[char]:
+            if guess == self.lang[char].split("_")[0]:
                 good_replies += 1
             else:
-                print("Wrong: {} -> {}".format(char, self.lang[char]))
+                print("Wrong: {} -> {} ({})".format(char, *self.lang[char].split('_')))
             nb_replies += 1
 
 
@@ -82,5 +82,4 @@ if __name__ == "__main__":
 
     learner = Learner(verbose = True)
     learner.set_lang('kana')
-    #learner.set_lang('katakana')
     learner.learn()
