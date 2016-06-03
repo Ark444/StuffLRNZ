@@ -1,2 +1,3 @@
-# langlearn
-Langlearn is a tool that helps remember things ; particularly useful for learning new languages.
+# StuffLRNZ
+
+StuffLRNZ is a tool that helps remembering association of things. Particularly useful to learn languages such as Japanese.
