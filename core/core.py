@@ -7,7 +7,10 @@ class Core(object):
         self.verbose = args.verbose
         self.list_dicts = args.list_dicts
         self.list_guis = args.list_gui
-        self.gui_name = args.gui
+        
+        self.setGUI(args.gui)
+        if self.verbose == True:
+            print('Loaded GUI: %s' % (self.gui.GUI_NAME,))
 
     def run(self):
 
@@ -35,3 +38,6 @@ class Core(object):
                         description += ' (please add description.txt file in %s)' % (
                                 os.path.join(gui_path, f))
                 print('  * %s:\t%s' % (f, description))
+
+    def setGUI(self, gui_name):
+        self.gui = getattr(__import__(gui_name), gui_name)()
