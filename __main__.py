@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import sqlite3
 
 import config
 import core
@@ -25,9 +26,10 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    if args.select_dict == None and not args.list_gui and not args.list_dicts:
-        print('You must select a dictionary first using -s option')
-    else:
+    try:
         core = core.Core(args)
-        core.run()
+    except (sqlite3.OperationalError, RuntimeError) as e:
+        print(e)
+        exit(0)
+    core.run()
 

@@ -6,17 +6,29 @@ class Core(object):
 
     def __init__(self, args):
         self.verbose = args.verbose
-        self.list_dicts = args.list_dicts
-        self.list_guis = args.list_gui
-
-        self.dict = args.select_dict
+        self.db_conn = sqlite3.connect(args.db)
+        self.db_cursor = self.db_conn.cursor()
 
         self.setGUI(args.gui)
         if self.verbose == True:
-            print('Loaded GUI: %s' % (self.gui.GUI_NAME,))
+            print('[+] Loaded GUI: %s' % (self.gui.GUI_NAME,))
 
-        self.db_conn = sqlite3.connect(args.db)
-        self.db_cursor = self.db_conn.cursor()
+        self.list_dicts = args.list_dicts
+        self.list_guis = args.list_gui
+        if args.list_dicts == True or args.list_gui == True:
+            return
+
+        if args.select_dict == None and not args.list_gui and not args.list_dicts:
+            self.dict = self.gui.menu(
+                    )
+        else:
+           self.dict = args.select_dict
+        if any(
+            self.db_cursor.execute(
+                'SELECT name FROM sqlite_master WHERE type="table" AND name="%s"' % self.dict
+                )
+            ) == False:
+            raise sqlite3.OperationalError('[-] Error: Dictionary "%s" does not exist in the database.' % self.dict)
 
     def run(self):
         self.running = True
@@ -46,9 +58,12 @@ class Core(object):
             else:
                 self.gui.display_data('The answer was: %s' %(name), 'TEXT')
 
+    def get_dict_list(self):
+        return self.db_cursor.execute('SELECT name FROM sqlite_master WHERE type="table"')
+
     def list_dictionaries(self):
         print('Available dictionaries are:')
-        for dic in self.db_cursor.execute('SELECT name FROM sqlite_master WHERE type="table"'):
+        for dic in self.get_dict_list():
             print('  * %s' % (dic))
 
     def list_gui(self):
@@ -67,4 +82,8 @@ class Core(object):
                 print('  * %s:\t%s' % (f, description))
 
     def setGUI(self, gui_name):
-        self.gui = getattr(__import__(gui_name), gui_name)()
+        try:
+            self.gui = getattr(__import__(gui_name), gui_name)()
+        except ImportError:
+            raise RuntimeError('[-] Error: GUI "%s" does not exist.' % gui_name)
+
