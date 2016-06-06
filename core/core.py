@@ -27,7 +27,13 @@ class Core(object):
                 'SELECT name FROM sqlite_master WHERE type="table" AND name="%s"' % self.dict
                 )
             ) == False:
-            raise sqlite3.OperationalError('[-] Error: Dictionary "%s" does not exist in the database.' % self.dict)
+            raise sqlite3.OperationalError('[-] Error: Dictionary "%s" does not exist in the database.' % (self.dict))
+        if any(
+                self.db_cursor.execute(
+                    'SELECT * FROM %s ORDER BY RANDOM() LIMIT 1' % (self.dict)
+                )
+            ) == False:
+            raise sqlite3.OperationalError('[-] Error: This dictionary "%s" appears to be empty.' % (self.dict))
 
     def run(self):
         self.running = True
