@@ -21,7 +21,7 @@ if __name__ == '__main__':
             help='List available GUI and exit')
     parser.add_argument('--gui', '-g', default="termGUI",
             help='Choose a GUI to use with StuffLRNZ')
-    parser.add_argument('--db', '-d', default='stufflrnz.db',
+    parser.add_argument('--db', '-d', default=config.config.get('Global', 'database'),
             help='Select the database to use (default stufflrnz.db)')
 
     args = parser.parse_args()
