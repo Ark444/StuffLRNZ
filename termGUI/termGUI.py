@@ -35,3 +35,19 @@ class termGUI(object):
 
     def get_input(self):
         return input('> ')
+
+    def menu_select(self, items):
+        idx = 0
+        for item in items:
+            print('%d) %s' % (idx, item))
+            idx += 1
+        while True:
+            selection = []
+            try:
+                for idx in input('> ').split(','):
+                    selection.append(items[int(idx)])
+            except IndexError:
+                print('[-] Error: invalid selection.')
+            else:
+                break
+        return selection
