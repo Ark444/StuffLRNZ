@@ -19,7 +19,8 @@ class Core(object):
             return
 
         if args.select_dict == None and not args.list_gui and not args.list_dicts:
-            self.dict = self.gui.menu_select([x[0] for x in self.get_dict_list()])[0]
+            self.dict = self.gui.menu_select('Please choose a dictionary to continue',
+                    [x[0] for x in self.get_dict_list()])[0]
         else:
            self.dict = args.select_dict
         if any(

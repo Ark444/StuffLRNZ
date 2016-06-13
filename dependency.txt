@@ -1,2 +1,4 @@
 configparser
 
+sqlite3
+PIL

@@ -36,7 +36,8 @@ class termGUI(object):
     def get_input(self):
         return input('> ')
 
-    def menu_select(self, items):
+    def menu_select(self, menu_title, items):
+        print('=== %s ===' % (menu_title))
         idx = 0
         for item in items:
             print('%d) %s' % (idx, item))
